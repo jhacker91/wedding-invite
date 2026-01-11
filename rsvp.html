@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conferma presenza</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <div class="brand">Giuseppe & Erica</div>
+      <nav class="nav">
+        <a href="index.html">Invito</a>
+        <a href="rsvp.html" class="active">Conferma</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero hero--small">
+      <h1>Conferma la tua presenza</h1>
+      <p>Inserisci i dati. Se avevi già confermato, aggiorneremo la tua riga.</p>
+    </section>
+
+    <section class="formwrap">
+      <form id="rsvpForm" class="form">
+        <input type="hidden" name="token" value="6M7qetdhvfrQfyhtxc7O" />
+        <input type="text" name="website" autocomplete="off" tabindex="-1" class="hp" />
+
+          
+        <div class="grid">
+          <label>
+            Nome
+            <input name="nome" type="text" autocomplete="given-name" required />
+          </label>
+
+          <label>
+            Cognome
+            <input name="cognome" type="text" autocomplete="family-name" required />
+          </label>
+
+          <label>
+            Numero adulti
+            <input name="numero" type="number" min="0" max="10" value="1" required />
+          </label>
+
+          <label>
+            Numero bambini
+            <input name="bambini" type="number" min="0" max="10" value="0" required />
+          </label>
+        </div>
+
+        <button class="btn btn--primary" type="submit">Invia conferma</button>
+
+        <p id="status" class="status" aria-live="polite"></p>
+      </form>
+
+      <!-- iframe nascosto per inviare senza lasciare la pagina -->
+      <iframe id="hiddenFrame" name="hiddenFrame" class="hidden"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_89jhkTTpNyk104PVF7Xj5utSSqfh4leAUsTmoI7PKx2_ck81Su5l6FFmB-B3iOhB/exec";
+
+    const form = document.getElementById("rsvpForm");
+    const statusEl = document.getElementById("status");
+
+    form.addEventListener("submit", () => {
+      statusEl.textContent = "Invio in corso…";
+
+      // invio come form classico verso Apps Script (niente CORS)
+      form.setAttribute("action", SCRIPT_URL);
+      form.setAttribute("method", "POST");
+      form.setAttribute("target", "hiddenFrame");
+
+      // dopo un attimo mostriamo conferma "ottimistica"
+      // (non possiamo leggere la response via iframe in modo semplice cross-domain)
+      setTimeout(() => {
+        statusEl.textContent = "Inviato! Se hai sbagliato, reinvia: aggiorneremo i dati.";
+        form.reset();
+      }, 900);
+    });
+  </script>
+</body>
+</html>
